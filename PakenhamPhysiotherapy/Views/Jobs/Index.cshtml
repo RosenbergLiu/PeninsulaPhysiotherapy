@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Job>
+
+@{
+    ViewData["Title"] = "Job List";
+}
+
+<h1>Index</h1>
+
+<p>
+    <form asp-action="Create">
+        <input type="submit" value="Make a new booking" class="btn btn-success" />
+    </form>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CustName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobDateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustPhone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TherapistName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.JobStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.JobDateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustPhone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TherapistName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.JobStatus)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.JobID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.JobID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.JobID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
