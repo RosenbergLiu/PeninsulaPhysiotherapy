@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 public class Job
 {
+    [Key]
     public int JobID { get; set; }
+    public string UserID { get; set; }
     [Required]
     public string CustName { get; set; }
 
@@ -13,11 +15,17 @@ public class Job
 
     [Required]
     [DataType(DataType.PhoneNumber)]
-    public string CustPhone { get; set; }
+    [Display(Name="Phone Number")]
+    public string? CustPhone { get; set; }
 
-
+    [Required]
+    [Display(Name = "Therapist Name")]
     public string TherapistName { get; set; }
+
+    [Required]
+    [Display(Name ="Service")]
     public string ServiceName { get; set; }
+
     public JobStatus JobStatus { get; set; }
 }
 

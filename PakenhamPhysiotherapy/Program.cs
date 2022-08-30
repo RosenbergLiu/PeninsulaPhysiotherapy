@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PakenhamPhysiotherapy.Data;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +18,27 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("booking", policy =>
-        policy.RequireRole("admin","cust","staff"));
+        policy.RequireRole("admin", "cust", "staff"));
     options.AddPolicy("Approve&Reject", policy =>
         policy.RequireRole("admin", "staff"));
+    options.AddPolicy("JobsIndex", policy =>
+        policy.RequireRole("admin", "staff"));
+}).AddOpenIdConnect(options =>
+{
+    options.SignInScheme = "Cookies";
+    options.Authority = "-your-identity-provider-";
+    options.RequireHttpsMetadata = true;
+    options.ClientId = "-your-clientid-";
+    options.ClientSecret = "-your-client-secret-from-user-secrets-or-keyvault";
+    options.ResponseType = "code";
+    options.UsePkce = true;
+    options.Scope.Add("profile");
+    options.SaveTokens = true;
 });
 
 var app = builder.Build();

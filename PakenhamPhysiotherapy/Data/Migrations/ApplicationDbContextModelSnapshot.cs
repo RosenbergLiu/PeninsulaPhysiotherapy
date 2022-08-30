@@ -52,6 +52,10 @@ namespace PakenhamPhysiotherapy.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("JobID");
 
                     b.ToTable("Job");

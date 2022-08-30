@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PakenhamPhysiotherapy.Data;
@@ -13,6 +14,7 @@ namespace PakenhamPhysiotherapy.Controllers
         public JobsController(ApplicationDbContext context)
         {
             _context = context;
+            
         }
 
         // GET: Jobs
@@ -64,8 +66,6 @@ namespace PakenhamPhysiotherapy.Controllers
             }
             return View(job);
         }
-
-
 
 
         // GET: Jobs/Edit/5

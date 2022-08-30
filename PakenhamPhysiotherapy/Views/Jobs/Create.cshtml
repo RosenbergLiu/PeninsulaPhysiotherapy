@@ -1,4 +1,6 @@
-﻿@model Job
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model Job
 
 @{
     ViewData["Title"] = "Create";
@@ -48,6 +50,7 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
