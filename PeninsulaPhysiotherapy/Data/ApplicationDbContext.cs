@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PeninsulaPhysiotherapy.Models;
 
 namespace PeninsulaPhysiotherapy.Data
 {
@@ -9,5 +10,7 @@ namespace PeninsulaPhysiotherapy.Data
             : base(options)
         {
         }
+        public DbSet<PeninsulaPhysiotherapy.Models.JobVM>? JobVM { get; set; }
+        public DbSet<PeninsulaPhysiotherapy.Models.TherapistVM>? TherapistVM { get; set; }
     }
 }

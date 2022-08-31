@@ -4,14 +4,12 @@
 @{
     ViewBag.Title = "All Roles";
 }
-<h1>All Roles</h1>
+<h1 class="text-center display-4">Role Management</h1>
 @if(Model.Any()){
 
     <a class="btn btn-primary mb-3" style="width:auto" asp-action="CreateRole" asp-controller="Administration">
         Create Role
     </a>
-
-
     foreach (var role in Model){
         <div class="card m-3">
             <div class="card-header">
