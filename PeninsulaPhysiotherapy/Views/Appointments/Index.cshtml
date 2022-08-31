@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PeninsulaPhysiotherapy.Models.JobVM>
+﻿@model IEnumerable<PeninsulaPhysiotherapy.Models.AppointmentVM>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,25 +14,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CustName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CustPhone)
+                @Html.DisplayNameFor(model => model.FullName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Gender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateAndTime)
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AppDate)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Therapist)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.JobType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.JobStatus)
             </th>
             <th></th>
         </tr>
@@ -41,25 +38,22 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.CustName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CustPhone)
+                @Html.DisplayFor(modelItem => item.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gender)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateAndTime)
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AppDate)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Therapist)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.JobType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.JobStatus)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

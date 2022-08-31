@@ -3,9 +3,7 @@ namespace PeninsulaPhysiotherapy.Models
 {
     public class TherapistVM
     {
-        [Required]
-        public string? Id { get; set; }
-
+        [Key]
         [Required]
         [Display(Name = "Full Name")]
         public string? FullName { get; set; }

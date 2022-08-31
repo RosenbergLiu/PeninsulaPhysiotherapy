@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,7 +37,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             }
 
             var therapistVM = await _context.TherapistVM
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.FullName == id);
             if (therapistVM == null)
             {
                 return NotFound();
@@ -56,7 +57,7 @@ namespace PeninsulaPhysiotherapy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Level,Email,Phone")] TherapistVM therapistVM)
+        public async Task<IActionResult> Create([Bind("FullName,Level,Email,Phone")] TherapistVM therapistVM)
         {
             if (ModelState.IsValid)
             {
@@ -88,9 +89,9 @@ namespace PeninsulaPhysiotherapy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,FullName,Level,Email,Phone")] TherapistVM therapistVM)
+        public async Task<IActionResult> Edit(string id, [Bind("FullName,Level,Email,Phone")] TherapistVM therapistVM)
         {
-            if (id != therapistVM.Id)
+            if (id != therapistVM.FullName)
             {
                 return NotFound();
             }
@@ -104,7 +105,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TherapistVMExists(therapistVM.Id))
+                    if (!TherapistVMExists(therapistVM.FullName))
                     {
                         return NotFound();
                     }
@@ -127,7 +128,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             }
 
             var therapistVM = await _context.TherapistVM
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.FullName == id);
             if (therapistVM == null)
             {
                 return NotFound();
@@ -157,7 +158,7 @@ namespace PeninsulaPhysiotherapy.Controllers
 
         private bool TherapistVMExists(string id)
         {
-          return (_context.TherapistVM?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.TherapistVM?.Any(e => e.FullName == id)).GetValueOrDefault();
         }
     }
 }

@@ -10,87 +10,87 @@ using PeninsulaPhysiotherapy.Models;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
-    public class JobsController : Controller
+    public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public JobsController(ApplicationDbContext context)
+        public AppointmentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Jobs
+        // GET: Appointments
         public async Task<IActionResult> Index()
         {
-              return _context.JobVM != null ? 
-                          View(await _context.JobVM.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.JobVM'  is null.");
+              return _context.AppointmentVM != null ? 
+                          View(await _context.AppointmentVM.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.AppointmentVM'  is null.");
         }
 
-        // GET: Jobs/Details/5
+        // GET: Appointments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.JobVM == null)
+            if (id == null || _context.AppointmentVM == null)
             {
                 return NotFound();
             }
 
-            var jobVM = await _context.JobVM
+            var appointmentVM = await _context.AppointmentVM
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (jobVM == null)
+            if (appointmentVM == null)
             {
                 return NotFound();
             }
 
-            return View(jobVM);
+            return View(appointmentVM);
         }
 
-        // GET: Jobs/Create
+        // GET: Appointments/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Jobs/Create
+        // POST: Appointments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CustName,CustPhone,Gender,DateAndTime,Therapist,JobType,JobStatus")] JobVM jobVM)
+        public async Task<IActionResult> Create([Bind("Id,FullName,Gender,Phone,AppDate,Therapist,JobType")] AppointmentVM appointmentVM)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(jobVM);
+                _context.Add(appointmentVM);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(jobVM);
+            return View(appointmentVM);
         }
 
-        // GET: Jobs/Edit/5
+        // GET: Appointments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.JobVM == null)
+            if (id == null || _context.AppointmentVM == null)
             {
                 return NotFound();
             }
 
-            var jobVM = await _context.JobVM.FindAsync(id);
-            if (jobVM == null)
+            var appointmentVM = await _context.AppointmentVM.FindAsync(id);
+            if (appointmentVM == null)
             {
                 return NotFound();
             }
-            return View(jobVM);
+            return View(appointmentVM);
         }
 
-        // POST: Jobs/Edit/5
+        // POST: Appointments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Id,CustName,CustPhone,Gender,DateAndTime,Therapist,JobType,JobStatus")] JobVM jobVM)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Gender,Phone,AppDate,Therapist,JobType")] AppointmentVM appointmentVM)
         {
-            if (id != jobVM.Id)
+            if (id != appointmentVM.Id)
             {
                 return NotFound();
             }
@@ -99,12 +99,12 @@ namespace PeninsulaPhysiotherapy.Controllers
             {
                 try
                 {
-                    _context.Update(jobVM);
+                    _context.Update(appointmentVM);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!JobVMExists(jobVM.Id))
+                    if (!AppointmentVMExists(appointmentVM.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +115,49 @@ namespace PeninsulaPhysiotherapy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(jobVM);
+            return View(appointmentVM);
         }
 
-        // GET: Jobs/Delete/5
+        // GET: Appointments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.JobVM == null)
+            if (id == null || _context.AppointmentVM == null)
             {
                 return NotFound();
             }
 
-            var jobVM = await _context.JobVM
+            var appointmentVM = await _context.AppointmentVM
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (jobVM == null)
+            if (appointmentVM == null)
             {
                 return NotFound();
             }
 
-            return View(jobVM);
+            return View(appointmentVM);
         }
 
-        // POST: Jobs/Delete/5
+        // POST: Appointments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.JobVM == null)
+            if (_context.AppointmentVM == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.JobVM'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.AppointmentVM'  is null.");
             }
-            var jobVM = await _context.JobVM.FindAsync(id);
-            if (jobVM != null)
+            var appointmentVM = await _context.AppointmentVM.FindAsync(id);
+            if (appointmentVM != null)
             {
-                _context.JobVM.Remove(jobVM);
+                _context.AppointmentVM.Remove(appointmentVM);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool JobVMExists(int? id)
+        private bool AppointmentVMExists(int id)
         {
-          return (_context.JobVM?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.AppointmentVM?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
