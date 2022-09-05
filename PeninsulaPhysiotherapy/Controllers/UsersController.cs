@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PeninsulaPhysiotherapy.Models;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
-    public class UsersController:Controller
+    public class UsersController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<IdentityUser> userManager;
@@ -15,11 +14,17 @@ namespace PeninsulaPhysiotherapy.Controllers
             this.roleManager = roleManager;
             this.userManager = userManager;
         }
+
         [HttpGet]
-        public IActionResult ListUsers()
+        public IActionResult ListUsers(string id)
         {
-            var user = userManager.Users;
-            return View(user);
+            var users = userManager.Users;
+            if (!String.IsNullOrEmpty(id))
+            {
+                users = users.Where(s => s.UserName!.Contains(id));
+                ViewBag.Search = $"search result for '{id}'";
+            }
+            return View(users);
         }
     }
 }
