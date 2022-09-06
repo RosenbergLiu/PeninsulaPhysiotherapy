@@ -1,14 +1,14 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model IEnumerable<IdentityUser>
+@inject RoleManager<IdentityRole> roleManager
+@inject UserManager<IdentityUser> userManager
 
 @{
     ViewBag.Title = "All Users";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var roles = roleManager.Roles;
+    var users = userManager.Users;
 }
-
-
-
-
 <h1 class="text-center display-4">User Management</h1>
 <a class="btn btn-primary mb-3" style="width:auto" href="/Identity/Account/Register">
     Create User
@@ -32,17 +32,51 @@
 <br />
 @if(Model.Any()){
     <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    User Name
+                </th>
+                <th>
+                    User Role
+                </th>
+                <th>
+                    Email Confirmed
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
         <tbody>
         @foreach(var user in Model){
         <tr>
             <td>
-                <h5>@user.UserName</h5>
+                @user.UserName
             </td>
             <td>
-                <a asp-action="" asp-route-id="@user.Id">Edit</a> |
-                <a asp-action="" asp-route-id="@user.Id">Details</a> |
-                <a asp-action="" asp-route-id="@user.Id">Delete</a>
+                        @{
+                            ViewBag.RoleList = "";
+                            foreach (string role in ViewBag.UserRole[user.UserName])
+                            {
+                                ViewBag.RoleList = ViewBag.RoleList + role + ", ";
+                                ViewBag.RoleList = ViewBag.RoleList.Remove(ViewBag.RoleList.Length - 2);
+                            }
+                            if (ViewBag.RoleList == "")
+                            {
+                                ViewBag.RoleList = "Guest";
+                            }
+                        }
+                @ViewBag.RoleList
             </td>
+            <td>
+                @user.EmailConfirmed
+            </td>
+            <td>
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Users" asp-action="EditUser" asp-route-id="@user.Id">Edit</a> |
+                <a class="btn btn-outline-danger btn-sm" asp-action="" asp-route-id="@user.Id">Delete</a>
+            </td>
+            
         </tr>
         }
     </tbody>

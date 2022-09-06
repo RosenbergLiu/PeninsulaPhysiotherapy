@@ -11,7 +11,8 @@ namespace PeninsulaPhysiotherapy.Controllers
 
         public AdministrationController(
             RoleManager<IdentityRole> roleManager,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager
+            )
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
@@ -104,9 +105,6 @@ namespace PeninsulaPhysiotherapy.Controllers
                 return View(model);
             }
         }
-
-
-
         [HttpGet]
         public async Task<IActionResult> EditUsersInRole(string roleId)
         {
@@ -138,21 +136,23 @@ namespace PeninsulaPhysiotherapy.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> EditUsersInRole(List<UserRoleVM> model,string roleId)
+        public async Task<IActionResult> EditUsersInRole(List<UserRoleVM> model, string roleId)
         {
             var role = await roleManager.FindByIdAsync(roleId);
             if (role == null)
             {
                 return View("NotFound");
             }
-            for(int i= 0; i < model.Count; i++)
+            for (int i = 0; i < model.Count; i++)
             {
                 var user = await userManager.FindByIdAsync(model[i].UserId);
                 IdentityResult? result = null;
                 if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
                 {
                     result = await userManager.AddToRoleAsync(user, role.Name);
-                }else if(model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name)){
+                }
+                else if (model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name))
+                {
                     result = await userManager.RemoveFromRoleAsync(user, role.Name);
                 }
                 else
