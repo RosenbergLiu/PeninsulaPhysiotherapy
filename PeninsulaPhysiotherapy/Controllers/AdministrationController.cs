@@ -16,7 +16,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             this.roleManager = roleManager;
             this.userManager = userManager;
         }
-        
+
 
         [HttpGet]
         public IActionResult CreateRole()
@@ -103,6 +103,77 @@ namespace PeninsulaPhysiotherapy.Controllers
                 }
                 return View(model);
             }
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> EditUsersInRole(string roleId)
+        {
+            ViewBag.roleId = roleId;
+            var role = await roleManager.FindByIdAsync(roleId);
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"{roleId} can not be found.";
+                return View("NotFound");
+            }
+            var model = new List<UserRoleVM>();
+            foreach (var user in userManager.Users)
+            {
+                var userRoleVM = new UserRoleVM()
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName
+                };
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    userRoleVM.IsSelected = true;
+                }
+                else
+                {
+                    userRoleVM.IsSelected = false;
+                }
+                model.Add(userRoleVM);
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditUsersInRole(List<UserRoleVM> model,string roleId)
+        {
+            var role = await roleManager.FindByIdAsync(roleId);
+            if (role == null)
+            {
+                return View("NotFound");
+            }
+            for(int i= 0; i < model.Count; i++)
+            {
+                var user = await userManager.FindByIdAsync(model[i].UserId);
+                IdentityResult? result = null;
+                if (model[i].IsSelected && !(await userManager.IsInRoleAsync(user, role.Name)))
+                {
+                    result = await userManager.AddToRoleAsync(user, role.Name);
+                }else if(model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name)){
+                    result = await userManager.RemoveFromRoleAsync(user, role.Name);
+                }
+                else
+                {
+                    continue;
+                }
+                if (result.Succeeded)
+                {
+                    if (i < (model.Count - 1))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        return RedirectToAction("EditRole", new { id = roleId });
+                    }
+                }
+
+
+            }
+            return RedirectToAction("EditRole", new { id = roleId });
         }
     }
 }
