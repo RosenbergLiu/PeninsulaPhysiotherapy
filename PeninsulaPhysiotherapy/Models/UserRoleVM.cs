@@ -1,4 +1,5 @@
-﻿namespace PeninsulaPhysiotherapy.Models
+﻿
+namespace PeninsulaPhysiotherapy.Models
 {
     public class UserRoleVM
     {

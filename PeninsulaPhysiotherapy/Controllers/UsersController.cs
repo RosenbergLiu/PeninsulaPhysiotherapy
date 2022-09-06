@@ -5,6 +5,7 @@ using System.Data;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
+
     public class UsersController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
