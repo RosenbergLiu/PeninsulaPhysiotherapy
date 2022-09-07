@@ -19,13 +19,12 @@
                 <h5 class="card-title">@role.Name</h5>
             </div>
             <div class="card-footer">
-                <a id="rolelistEdit" class="btn btn-primary" 
-                asp-action="EditRole" 
-                asp-controller="Administration" 
-                asp-route-id=@role.Id>
-                    Edit
-                    </a>
-                <a href="#" id="rolelistDelete" class="btn btn-danger">Delete</a>
+
+                <a id="rolelistEdit" class="btn btn-outline-primary btn-sm" asp-action="EditRole" asp-controller="Administration" asp-route-id=@role.Id>
+                        Edit
+                </a>
+
+                
             </div>
         </div>
     }
@@ -46,3 +45,4 @@
         </div>
     </div>
 }
+<script src="~/js/span.js"></script>

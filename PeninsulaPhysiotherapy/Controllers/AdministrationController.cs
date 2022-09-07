@@ -60,6 +60,7 @@ namespace PeninsulaPhysiotherapy.Controllers
         [HttpGet]
         public async Task<IActionResult> EditRole(string id)
         {
+            ViewBag.Id = id;
             var role = await roleManager.FindByIdAsync(id);
             if (role == null)
             {
@@ -174,6 +175,31 @@ namespace PeninsulaPhysiotherapy.Controllers
 
             }
             return RedirectToAction("EditRole", new { id = roleId });
+        }
+
+
+        [HttpPost, ActionName("DeleteRole")]
+        public async Task<IActionResult> DeleteRole(string id)
+        {
+            var role = await roleManager.FindByIdAsync(id);
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"User with id={id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                var result = await roleManager.DeleteAsync(role);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListRoles");
+                }
+                foreach(var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return RedirectToAction("ListRoles");
         }
     }
 }

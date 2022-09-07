@@ -60,11 +60,12 @@
                             foreach (string role in ViewBag.UserRole[user.UserName])
                             {
                                 ViewBag.RoleList = ViewBag.RoleList + role + ", ";
-                                ViewBag.RoleList = ViewBag.RoleList.Remove(ViewBag.RoleList.Length - 2);
                             }
                             if (ViewBag.RoleList == "")
                             {
                                 ViewBag.RoleList = "Guest";
+                            }else{
+                                ViewBag.RoleList = ViewBag.RoleList.Remove(ViewBag.RoleList.Length - 2);
                             }
                         }
                 @ViewBag.RoleList
