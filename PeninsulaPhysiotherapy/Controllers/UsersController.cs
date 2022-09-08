@@ -28,26 +28,18 @@ namespace PeninsulaPhysiotherapy.Controllers
                 ViewBag.Search = $"search result for '{id}'";
             }
             var roles = roleManager.Roles;
-            ViewBag.UserRole = new Dictionary<string, List<string>>();
-            foreach(var user in users)
+            ViewBag.UserRole = new Dictionary<string, IList<string>>();
+            foreach (var user in users)
             {
-                var roleList = new List<string>();
-                foreach (var role in roles)
-                {
-                    if(await userManager.IsInRoleAsync(user, role.Name))
-                    {
-                        roleList.Add(role.Name);
-                    }
-                }
-
-                ViewBag.UserRole.Add(user.UserName, roleList);
+                var userList = await userManager.GetRolesAsync(user);
+                ViewBag.UserRole.Add(user.UserName, userList);
             }
             return View(users);
         }
 
         public IActionResult EditUser()
         {
-                return View();
+            return View();
         }
 
         [HttpGet]
@@ -64,8 +56,35 @@ namespace PeninsulaPhysiotherapy.Controllers
             var model = new EditUserVM()
             {
                 Id = user.Id,
-                Email = user.UserName
+                Email = user.UserName,
+                Claims = userClaims.Select(c => c.Value).ToList(),
+                Roles = userRoles
             };
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user= await userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                var result = await userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListUsers");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View("ListUsers");
+            }
         }
 
     }

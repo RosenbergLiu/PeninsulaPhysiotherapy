@@ -19,7 +19,7 @@
     <div class="input-group">
         <input class="form-control" type="text" name="id"/>
         <div class="input-group-append">
-            <input class="btn btn-secondary" type="submit" value="Search" />
+            <input class="btn btn-primary" type="submit" value="Search" />
         </div>
     </div>
     @if (!String.IsNullOrEmpty(ViewBag.Search)){
@@ -50,7 +50,7 @@
         </thead>
         <tbody>
         @foreach(var user in Model){
-        <tr>
+            <tr>
             <td>
                 @user.UserName
             </td>
@@ -74,20 +74,51 @@
                 @user.EmailConfirmed
             </td>
             <td>
-                <a class="btn btn-outline-primary btn-sm" asp-controller="Users" asp-action="EditUser" asp-route-id="@user.Id">Edit</a> |
-                <a class="btn btn-outline-danger btn-sm" asp-action="" asp-route-id="@user.Id">Delete</a>
+                <form method="post" asp-action="DeleteUser" asp-route-id="@user.Id">
+                    <a class="btn btn-outline-primary btn-sm" asp-controller="Users" asp-action="EditUser" asp-route-id="@user.Id">Edit</a> |
+                    
+                            <button class='centerMe'>
+                                <div class='icon'>
+                                    <i class='fa fa-trash-o'></i>
+                                    <i class='fa fa-question'></i>
+                                    <i class='fa fa-check'></i>
+                                </div>
+                                <div class='text'>
+                                    <span>Delete</span>
+                                </div>
+                            </button>
+                </form>
+                
             </td>
             
-        </tr>
+            </tr>
         }
-    </tbody>
+        </tbody>
     </table>
     
-    
-        
        
-    }else{
-        <div class="card">
-            No User Matched
-        </div>
-    }
+}else{
+    <h2>No User Matched</h2>
+}
+
+<script>
+    $("button").click(function () {
+        if ($(this).hasClass("confirm")) {
+            $(this).addClass("done");
+            $("span").text("Deleted");
+        } else {
+            $(this).addClass("confirm");
+            $("span").text("Are you sure?");
+        }
+    });
+
+    // Reset
+    $("button").on('mouseout', function () {
+        if ($(this).hasClass("confirm") || $(this).hasClass("done")) {
+            setTimeout(function () {
+                $("button").removeClass("confirm").removeClass("done");
+                $("span").text("Delete");
+            }, 3000);
+        }
+    });
+</script>
