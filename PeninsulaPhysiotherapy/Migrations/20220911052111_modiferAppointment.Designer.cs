@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PeninsulaPhysiotherapy.Data;
 
@@ -11,9 +12,10 @@ using PeninsulaPhysiotherapy.Data;
 namespace PeninsulaPhysiotherapy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220911052111_modiferAppointment")]
+    partial class modiferAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,6 +238,7 @@ namespace PeninsulaPhysiotherapy.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
@@ -247,9 +250,11 @@ namespace PeninsulaPhysiotherapy.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JobStatus")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JobType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
@@ -257,6 +262,7 @@ namespace PeninsulaPhysiotherapy.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Therapist")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

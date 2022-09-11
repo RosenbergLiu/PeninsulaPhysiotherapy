@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +13,13 @@ using PeninsulaPhysiotherapy.Models;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
+    [Authorize]
     public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AppointmentsController(ApplicationDbContext context)
+        public AppointmentsController(
+            ApplicationDbContext context)
         {
             _context = context;
         }
@@ -22,6 +27,7 @@ namespace PeninsulaPhysiotherapy.Controllers
         // GET: Appointments
         public async Task<IActionResult> Index()
         {
+            ViewBag.CreateBy = User.FindFirstValue(ClaimTypes.Name);
               return _context.AppointmentVM != null ? 
                           View(await _context.AppointmentVM.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.AppointmentVM'  is null.");
@@ -58,8 +64,11 @@ namespace PeninsulaPhysiotherapy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FullName,Gender,Phone,AppDate,Therapist,JobType")] AppointmentVM appointmentVM)
         {
+            
             if (ModelState.IsValid)
             {
+                appointmentVM.JobStatus = "Submited";
+                appointmentVM.CreatedBy = User.FindFirstValue(ClaimTypes.Name);
                 _context.Add(appointmentVM);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -99,6 +108,8 @@ namespace PeninsulaPhysiotherapy.Controllers
             {
                 try
                 {
+                    appointmentVM.JobStatus = "Submited";
+                    appointmentVM.CreatedBy = User.FindFirstValue(ClaimTypes.Name);
                     _context.Update(appointmentVM);
                     await _context.SaveChangesAsync();
                 }
