@@ -21,11 +21,13 @@ namespace PeninsulaPhysiotherapy.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            this.userManager = userManager;
         }
 
         /// <summary>
@@ -109,6 +111,13 @@ namespace PeninsulaPhysiotherapy.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                var user = await userManager.FindByEmailAsync(Input.Email);
+                if (user != null && !user.EmailConfirmed)
+                {
+                    ModelState.AddModelError(string.Empty, "Email not confirmed");
+                    return Page();
+
+                }
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
@@ -121,6 +130,7 @@ namespace PeninsulaPhysiotherapy.Areas.Identity.Pages.Account
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
+                
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
