@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using PeninsulaPhysiotherapy.Models;
 using System.Data;
 
@@ -63,6 +64,60 @@ namespace PeninsulaPhysiotherapy.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ManageUserRoles(string userId)
+        {
+            ViewBag.userId = userId;
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+            var model = new List<RoleUserVM>();
+            foreach(var role in roleManager.Roles)
+            {
+                var roleUserVM = new RoleUserVM
+                {
+                    RoleId = role.Id,
+                    RoleName = role.Name
+                };
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    roleUserVM.IsSelected = true;
+                }
+                else
+                {
+                    roleUserVM.IsSelected = false;
+                }
+                model.Add(roleUserVM);
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ManageUserRoles(List<RoleUserVM> model, string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+            var roles = await userManager.GetRolesAsync(user);
+            var result = await userManager.RemoveFromRolesAsync(user, roles);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot remove role");
+                return View(model);
+            }
+            result = await userManager.AddToRolesAsync(user, model.Where(x => x.IsSelected).Select(y => y.RoleName));
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot add role");
+                return View(model);
+            }
+            return RedirectToAction("EditUser", new {Id=userId});
+        }
 
         public async Task<IActionResult> DeleteUser(string id)
         {

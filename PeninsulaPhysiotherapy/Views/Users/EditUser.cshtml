@@ -44,10 +44,10 @@
             }
         </div>
         <div class="card-footer">
-            <a href="#" style="width:auto" class="btn btn-primary">Add or Remove Roles</a>
+            <a asp-action="ManageUserRoles" asp-route-userId="@Model.Id" style="width:auto" class="btn btn-primary">Add or Remove Roles</a>
         </div>
     </div>
-
+    <br />
     <div class="card">
         <div class="card-header">
             <h3>User Claims</h3>
@@ -72,5 +72,7 @@
 
 
 </form>
-
-
+<br />
+<hr />
+<br />
+<a asp-action="DeleteUser" asp-route-Id="@Model.Id" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete role: @Model.Email')">Delete</a>
