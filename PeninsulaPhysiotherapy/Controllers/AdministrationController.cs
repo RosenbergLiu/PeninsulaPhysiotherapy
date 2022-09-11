@@ -178,13 +178,13 @@ namespace PeninsulaPhysiotherapy.Controllers
         }
 
 
-        [HttpPost, ActionName("DeleteRole")]
+
         public async Task<IActionResult> DeleteRole(string id)
         {
             var role = await roleManager.FindByIdAsync(id);
             if (role == null)
             {
-                ViewBag.ErrorMessage = $"User with id={id} cannot be found";
+                ViewBag.ErrorMessage = $"Role with Id = {id} cannot be found";
                 return View("NotFound");
             }
             else
@@ -194,12 +194,12 @@ namespace PeninsulaPhysiotherapy.Controllers
                 {
                     return RedirectToAction("ListRoles");
                 }
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }
+                return View("ListRoles");
             }
-            return RedirectToAction("ListRoles");
         }
     }
 }
