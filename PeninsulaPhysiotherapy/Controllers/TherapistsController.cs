@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,12 @@ namespace PeninsulaPhysiotherapy.Controllers
     public class TherapistsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public TherapistsController(ApplicationDbContext context)
+        public TherapistsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            this.userManager = userManager;
         }
 
         // GET: Therapists
@@ -36,7 +40,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             }
 
             var therapistVM = await _context.TherapistVM
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Email == id);
             if (therapistVM == null)
             {
                 return NotFound();
@@ -56,8 +60,26 @@ namespace PeninsulaPhysiotherapy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Level,Email,Phone")] TherapistVM therapistVM)
+        public async Task<IActionResult> Create([Bind("Email,FullName,Level,Phone")] TherapistVM therapistVM)
         {
+            
+            var user = await userManager.FindByEmailAsync(therapistVM.Email);
+            
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "email not regiested");
+                return View();
+            }
+            if (_context.TherapistVM != null)
+            {
+                var therapist = await _context.TherapistVM.FindAsync(therapistVM.Email);
+                if (therapist != null)
+                {
+                    ModelState.AddModelError(string.Empty, "email already regiested as a therapist");
+                    return View();
+                }
+            }
+            
             if (ModelState.IsValid)
             {
                 _context.Add(therapistVM);
@@ -88,9 +110,9 @@ namespace PeninsulaPhysiotherapy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,FullName,Level,Email,Phone")] TherapistVM therapistVM)
+        public async Task<IActionResult> Edit(string id, [Bind("Email,FullName,Level,Phone")] TherapistVM therapistVM)
         {
-            if (id != therapistVM.Id)
+            if (id != therapistVM.Email)
             {
                 return NotFound();
             }
@@ -104,7 +126,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TherapistVMExists(therapistVM.Id))
+                    if (!TherapistVMExists(therapistVM.Email))
                     {
                         return NotFound();
                     }
@@ -127,7 +149,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             }
 
             var therapistVM = await _context.TherapistVM
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Email == id);
             if (therapistVM == null)
             {
                 return NotFound();
@@ -157,7 +179,7 @@ namespace PeninsulaPhysiotherapy.Controllers
 
         private bool TherapistVMExists(string id)
         {
-          return (_context.TherapistVM?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.TherapistVM?.Any(e => e.Email == id)).GetValueOrDefault();
         }
     }
 }

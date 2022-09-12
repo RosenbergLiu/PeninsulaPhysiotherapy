@@ -7,7 +7,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Booked Appointments</h1>
+<h1 class="text-center display-4">Booking Management</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -46,7 +46,7 @@
         </tr>
     </thead>
     <tbody>
-        @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded){
+        @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded) {
             @foreach (var item in Model)
             {
                 <tr>
@@ -84,7 +84,40 @@
                     </td>
                 </tr>
             }
-        }else{
+        }
+        else if ((await AuthorizationService.AuthorizeAsync(User, "Therapists")).Succeeded) {
+            @foreach (var item in Model.Where(m => m.Therapist.Equals(ViewBag.Therapist)))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gender)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AppDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Therapist)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JobType)
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
             @foreach (var item in Model.Where(m => m.CreatedBy.Equals(ViewBag.CreateBy)))
             {
                 <tr>

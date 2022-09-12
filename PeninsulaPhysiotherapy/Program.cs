@@ -26,6 +26,8 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin", "Staff"));
     options.AddPolicy("ManageUserRole", policy =>
         policy.RequireRole("Admin"));
+    options.AddPolicy("Therapists", policy =>
+        policy.RequireRole("Therapist"));
 
 });
 
