@@ -55,6 +55,11 @@ namespace PeninsulaPhysiotherapy.Controllers
         // GET: Appointments/Create
         public IActionResult Create()
         {
+            if(_context.TherapistVM != null)
+            {
+                ViewBag.Therapists = _context.TherapistVM.ToList();
+            }
+            
             return View();
         }
 
@@ -65,7 +70,10 @@ namespace PeninsulaPhysiotherapy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FullName,Gender,Phone,AppDate,Therapist,JobType")] AppointmentVM appointmentVM)
         {
-            
+            if (_context.TherapistVM != null)
+            {
+                ViewBag.Therapists = _context.TherapistVM.ToList();
+            }
             if (ModelState.IsValid)
             {
                 appointmentVM.JobStatus = "Submited";

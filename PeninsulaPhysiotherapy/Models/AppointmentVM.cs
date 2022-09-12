@@ -14,6 +14,7 @@ namespace PeninsulaPhysiotherapy.Models
         [Required]
         [DataType(DataType.DateTime)]
         public DateTime AppDate { get; set; }
+        [Required]
         public string? Therapist { get; set; }
         public string? JobType { get; set; }
         public string? JobStatus { get; set; }
