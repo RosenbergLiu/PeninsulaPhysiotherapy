@@ -31,6 +31,12 @@ namespace PeninsulaPhysiotherapy.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRole(CreateRoleVM model)
         {
+            var role=await roleManager.FindByNameAsync(model.RoleName);
+            if (role != null)
+            {
+                ModelState.AddModelError(string.Empty, "Role Name Exists");
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 IdentityRole identityRole = new IdentityRole
