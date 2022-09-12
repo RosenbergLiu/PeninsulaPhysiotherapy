@@ -6,10 +6,13 @@ namespace PeninsulaPhysiotherapy.Models
         [Required]
         public int Id { get; set; }
         [Required]
-        public string FullName { get; set; }
-        public string Gender { get; set; }
+        public string? FullName { get; set; }
+        public string? Gender { get; set; }
         [Required]
-        public string Phone { get; set; }
+        [Phone]
+        public string? Phone { get; set; }
+        [Required]
+        [DataType(DataType.DateTime)]
         public DateTime AppDate { get; set; }
         public string? Therapist { get; set; }
         public string? JobType { get; set; }

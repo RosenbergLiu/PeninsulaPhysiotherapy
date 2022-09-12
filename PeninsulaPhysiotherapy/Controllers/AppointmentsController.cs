@@ -170,5 +170,32 @@ namespace PeninsulaPhysiotherapy.Controllers
         {
           return (_context.AppointmentVM?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        public async Task<IActionResult> Approve(int id)
+        {
+            var appointmentVM = await _context.AppointmentVM.FindAsync(id);
+            if (appointmentVM == null)
+            {
+                return NotFound();
+            }
+            appointmentVM.JobStatus = "Approved";
+            _context.Update(appointmentVM);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Reject(int id)
+        {
+            var appointmentVM = await _context.AppointmentVM.FindAsync(id);
+            if (appointmentVM == null)
+            {
+                return NotFound();
+            }
+            appointmentVM.JobStatus = "Reject";
+            _context.Update(appointmentVM);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
     }
 }
