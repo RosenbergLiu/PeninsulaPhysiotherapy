@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -173,6 +174,7 @@ namespace PeninsulaPhysiotherapy.Controllers
 
         public async Task<IActionResult> Approve(int id)
         {
+            
             var appointmentVM = await _context.AppointmentVM.FindAsync(id);
             if (appointmentVM == null)
             {

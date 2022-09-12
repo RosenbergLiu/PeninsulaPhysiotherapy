@@ -67,7 +67,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "email not regiested");
+                ModelState.AddModelError(string.Empty, "Email not regiested as a user");
                 return View();
             }
             if (_context.TherapistVM != null)
@@ -75,7 +75,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                 var therapist = await _context.TherapistVM.FindAsync(therapistVM.Email);
                 if (therapist != null)
                 {
-                    ModelState.AddModelError(string.Empty, "email already regiested as a therapist");
+                    ModelState.AddModelError(string.Empty, "Email has already regiested as a therapist");
                     return View();
                 }
             }
