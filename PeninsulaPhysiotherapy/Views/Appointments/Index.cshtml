@@ -1,11 +1,13 @@
 ﻿@model IEnumerable<PeninsulaPhysiotherapy.Models.AppointmentVM>
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Booked Appointments</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -14,35 +16,39 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FullName)
+                Full Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Gender)
+                Gender
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Phone)
+                Phone
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AppDate)
+                Date
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Therapist)
+                Therapist
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.JobType)
+                Job Type
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.JobStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded){
+                <th>
+                    Job Status
+                </th>
+                <th>
+                    Created By
+                </th>
+            }
+            
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Where(m => m.CreatedBy.Equals(ViewBag.CreateBy)))
-        {
+        @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded){
+            @foreach (var item in Model)
+            {
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.FullName)
@@ -76,7 +82,36 @@
                     </td>
                 </tr>
             }
-            
-}
+        }else{
+            @foreach (var item in Model.Where(m => m.CreatedBy.Equals(ViewBag.CreateBy)))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gender)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Phone)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AppDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Therapist)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JobType)
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
 </table>

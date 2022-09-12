@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PeninsulaPhysiotherapy.Data;
 
@@ -11,9 +12,10 @@ using PeninsulaPhysiotherapy.Data;
 namespace PeninsulaPhysiotherapy.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220912024050_deletethera")]
+    partial class deletethera
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,14 +268,10 @@ namespace PeninsulaPhysiotherapy.Migrations
 
             modelBuilder.Entity("PeninsulaPhysiotherapy.Models.TherapistVM", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("FullName")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -283,7 +281,7 @@ namespace PeninsulaPhysiotherapy.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("FullName");
 
                     b.ToTable("TherapistVM");
                 });

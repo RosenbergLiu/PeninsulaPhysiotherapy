@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,21 +28,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" id="navListRoles" asp-area="" asp-controller="Administration" asp-action="ListRoles">Roles</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="btn btn-primary" asp-area="" asp-controller="Appointments" asp-action="Create">Make a new Booking</a>
-                        </li>
+                        
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Appointments" asp-action="Index">Bookings</a>
                         </li>
-
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "ManageUserRole")).Succeeded){
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="ListUsers">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" id="navListRoles" asp-area="" asp-controller="Administration" asp-action="ListRoles">Roles</a>
+                            </li>
+                        }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="ListUsers">Users</a>
+                            <a class="btn btn-primary" asp-area="" asp-controller="Appointments" asp-action="Create">Make a new Booking</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />

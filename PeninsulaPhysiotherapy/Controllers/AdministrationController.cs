@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PeninsulaPhysiotherapy.Models;
-using System.Data;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
@@ -45,7 +44,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                 }
                 foreach (IdentityError error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
@@ -104,7 +103,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                 }
                 foreach (IdentityError error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
                 return View(model);
             }
@@ -199,7 +198,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                 }
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
                 return View("ListRoles");
             }

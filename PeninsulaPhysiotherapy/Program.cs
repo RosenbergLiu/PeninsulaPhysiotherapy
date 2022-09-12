@@ -20,7 +20,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SeeFullJobs", policy =>
+        policy.RequireRole("Admin", "Staff"));
+    options.AddPolicy("ManageUserRole", policy =>
+        policy.RequireRole("Admin"));
 
+});
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => 
 { options.SignIn.RequireConfirmedAccount = true;
