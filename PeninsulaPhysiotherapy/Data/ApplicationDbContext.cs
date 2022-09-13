@@ -10,7 +10,6 @@ namespace PeninsulaPhysiotherapy.Data
             : base(options)
         {
         }
-        public DbSet<PeninsulaPhysiotherapy.Models.TherapistVM>? TherapistVM { get; set; }
         public DbSet<PeninsulaPhysiotherapy.Models.AppointmentVM>? AppointmentVM { get; set; }
     }
 }
