@@ -15,9 +15,9 @@ namespace PeninsulaPhysiotherapy.Controllers
     public class TherapistsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<AppUser> userManager;
 
-        public TherapistsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public TherapistsController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
             this.userManager = userManager;

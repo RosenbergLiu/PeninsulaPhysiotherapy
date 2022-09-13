@@ -9,11 +9,11 @@ namespace PeninsulaPhysiotherapy.Controllers
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<AppUser> userManager;
 
         public AdministrationController(
             RoleManager<IdentityRole> roleManager,
-            UserManager<IdentityUser> userManager
+            UserManager<AppUser> userManager
             )
         {
             this.roleManager = roleManager;

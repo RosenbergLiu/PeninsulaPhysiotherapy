@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PeninsulaPhysiotherapy.Data;
 using PeninsulaPhysiotherapy.Models;
+using SendGrid.Helpers.Mail;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
@@ -28,7 +29,17 @@ namespace PeninsulaPhysiotherapy.Controllers
         // GET: Appointments
         public async Task<IActionResult> Index()
         {
-            ViewBag.CreateBy = User.FindFirstValue(ClaimTypes.Name);
+            var loggedUserName = User.FindFirstValue(ClaimTypes.Name);
+            ViewBag.CreateBy = loggedUserName;
+            var therapists = await _context.TherapistVM.ToListAsync();
+            ViewBag.Therapist = string.Empty;
+            foreach (var therapist in therapists)
+            {
+                if (therapist.Email.Equals(loggedUserName))
+                {
+                    ViewBag.Therapist = therapist.FullName;
+                }
+            }
               return _context.AppointmentVM != null ? 
                           View(await _context.AppointmentVM.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.AppointmentVM'  is null.");
@@ -201,6 +212,19 @@ namespace PeninsulaPhysiotherapy.Controllers
                 return NotFound();
             }
             appointmentVM.JobStatus = "Reject";
+            _context.Update(appointmentVM);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Finish(int id)
+        {
+            var appointmentVM = await _context.AppointmentVM.FindAsync(id);
+            if (appointmentVM == null)
+            {
+                return NotFound();
+            }
+            appointmentVM.JobStatus = "Finished";
             _context.Update(appointmentVM);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
