@@ -9,6 +9,7 @@
     var roles = roleManager.Roles;
     var users = userManager.Users;
 }
+<body>
 <h1 class="text-center display-4">User Management</h1>
 <a class="btn btn-primary mb-3" style="width:auto" href="/Identity/Account/Register">
     Create User
@@ -35,8 +36,12 @@
         <thead>
             <tr>
                 <th>
+                    User Name
+                </th>
+                <th>
                     Email
                 </th>
+
                 <th>
                     User Role
                 </th>
@@ -53,6 +58,9 @@
             <tr>
             <td>
                 @user.UserName
+            </td>
+            <td>
+                @user.Email
             </td>
             <td>
                         @{
@@ -90,3 +98,4 @@
 }else{
     <h2>No User Matched</h2>
 }
+</body>

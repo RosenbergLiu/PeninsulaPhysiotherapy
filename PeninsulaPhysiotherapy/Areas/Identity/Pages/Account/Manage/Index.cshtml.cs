@@ -52,6 +52,8 @@ namespace PeninsulaPhysiotherapy.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
+            [Display(Name = "User Name")]
+            public string UserName { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -70,6 +72,7 @@ namespace PeninsulaPhysiotherapy.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
+                UserName = userName,
                 PhoneNumber = phoneNumber
             };
         }
@@ -110,9 +113,20 @@ namespace PeninsulaPhysiotherapy.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+            var userName = await _userManager.GetUserNameAsync(user);
+            if (Input.UserName != userName)
+            {
+                var setUserName = await _userManager.SetUserNameAsync(user, Input.UserName);
+                if (!setUserName.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set user name.";
+                    return RedirectToPage();
+                }
+            }
+
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "--- Your profile has been updated";
             return RedirectToPage();
         }
     }

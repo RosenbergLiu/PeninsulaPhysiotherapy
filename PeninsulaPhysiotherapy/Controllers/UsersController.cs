@@ -60,12 +60,39 @@ namespace PeninsulaPhysiotherapy.Controllers
             var model = new EditUserVM()
             {
                 Id = user.Id,
-                Email = user.UserName,
+                UserName = user.UserName,
                 Claims = userClaims.Select(c => c.Value).ToList(),
                 Roles = userRoles
             };
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> EditUser(EditUserVM editUserVM)
+        {
+            var user = await userManager.FindByIdAsync(editUserVM.Id);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {editUserVM.Id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                user.UserName = editUserVM.UserName;
+                var result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListUsers");
+                }
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View(editUserVM);
+            }
+        }
+
+
 
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles(string userId)
