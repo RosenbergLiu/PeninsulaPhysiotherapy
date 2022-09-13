@@ -41,7 +41,7 @@
                 <select asp-for="Therapist" class="form-select">
                     <option selected>Select a Therapist</option>
                     @foreach(var therapist in ViewBag.Therapists){
-                        <option value="@therapist.FullName">@therapist.FullName</option>
+                        <option value="@therapist.Email">@therapist.UserName</option>
                     }
                 </select>
                 <span asp-validation-for="Therapist" class="text-danger"></span>

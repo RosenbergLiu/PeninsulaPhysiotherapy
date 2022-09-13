@@ -9,12 +9,12 @@ using System.Xml.Linq;
 
 namespace PeninsulaPhysiotherapy.Services;
 
-public class EmailSender : IEmailSender
+public class emailSender : IEmailSender
 {
     private readonly ILogger _logger;
 
-    public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
-                       ILogger<EmailSender> logger)
+    public emailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
+                       ILogger<emailSender> logger)
     {
         Options = optionsAccessor.Value;
         _logger = logger;

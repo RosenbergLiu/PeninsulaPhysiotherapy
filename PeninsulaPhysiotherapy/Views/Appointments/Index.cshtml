@@ -33,14 +33,12 @@
             <th>
                 Job Type
             </th>
-            @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded){
                 <th>
                     Job Status
                 </th>
                 <th>
                     Created By
                 </th>
-            }
             
             <th></th>
         </tr>
@@ -63,7 +61,7 @@
                         @Html.DisplayFor(modelItem => item.AppDate)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Therapist)
+                        @ViewBag.TherapistName[item.Therapist]
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.JobType)
@@ -81,43 +79,6 @@
                         <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
                         <a asp-action="Approve" asp-route-id="@item.Id">Approve</a> |
                         <a asp-action="Reject" asp-route-id="@item.Id">Reject</a>
-                    </td>
-                </tr>
-            }
-        }
-        else if ((await AuthorizationService.AuthorizeAsync(User, "Therapists")).Succeeded) {
-            @foreach (var item in Model.Where(m => m.Therapist.Equals(ViewBag.Therapists)))
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FullName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Gender)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Phone)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AppDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Therapist)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.JobType)
-                    </td>
-
-                    <td>
-                        
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        @if (item.JobStatus != "Finished")
-                        {
-                            <a class="btn btn-primary" asp-action="Finish" asp-route-id="@item.Id">Finish</a>
-                        }
-                        
                     </td>
                 </tr>
             }
@@ -140,7 +101,7 @@
                         @Html.DisplayFor(modelItem => item.AppDate)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Therapist)
+                        @ViewBag.TherapistName[item.Therapist]
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.JobType)

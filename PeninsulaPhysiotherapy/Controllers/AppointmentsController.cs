@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PeninsulaPhysiotherapy.Data;
 using PeninsulaPhysiotherapy.Models;
+using PeninsulaPhysiotherapy.Services;
 using SendGrid.Helpers.Mail;
 
 namespace PeninsulaPhysiotherapy.Controllers
@@ -19,11 +22,15 @@ namespace PeninsulaPhysiotherapy.Controllers
     public class AppointmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> userManager;
+        private readonly IEmailSender _emailSender;
 
         public AppointmentsController(
-            ApplicationDbContext context)
+            ApplicationDbContext context, UserManager<AppUser> userManager,IEmailSender emailSender)
         {
             _context = context;
+            this.userManager = userManager;
+            this._emailSender = emailSender;
         }
 
         // GET: Appointments
@@ -31,18 +38,28 @@ namespace PeninsulaPhysiotherapy.Controllers
         {
             var loggedUserName = User.FindFirstValue(ClaimTypes.Name);
             ViewBag.CreateBy = loggedUserName;
-            var therapists = await _context.TherapistVM.ToListAsync();
-            ViewBag.Therapist = string.Empty;
-            foreach (var therapist in therapists)
+            ViewBag.Therapists = new List<AppUser>();
+            ViewBag.TherapistName = new Dictionary<string, string>();
+            foreach (var user in userManager.Users)
             {
-                if (therapist.Email.Equals(loggedUserName))
+                (ViewBag.TherapistName)[user.Email] = user.UserName;
+
+                if (await userManager.IsInRoleAsync(user, "Therapist"))
                 {
-                    ViewBag.Therapist = therapist.FullName;
+                    ViewBag.Therapists.Add(user);
                 }
             }
-              return _context.AppointmentVM != null ? 
+            
+
+
+
+
+
+            return _context.AppointmentVM != null ? 
                           View(await _context.AppointmentVM.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.AppointmentVM'  is null.");
+
+            
         }
 
         // GET: Appointments/Details/5
@@ -64,13 +81,17 @@ namespace PeninsulaPhysiotherapy.Controllers
         }
 
         // GET: Appointments/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            if(_context.TherapistVM != null)
+            ViewBag.Therapists = new List<AppUser>();
+            foreach (var user in userManager.Users)
             {
-                ViewBag.Therapists = _context.TherapistVM.ToList();
+                if (await userManager.IsInRoleAsync(user, "Therapist"))
+                {
+                    ViewBag.Therapists.Add(user);
+                }
             }
-            
+
             return View();
         }
 
@@ -81,9 +102,13 @@ namespace PeninsulaPhysiotherapy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FullName,Gender,Phone,AppDate,Therapist,JobType")] AppointmentVM appointmentVM)
         {
-            if (_context.TherapistVM != null)
+            ViewBag.Therapists = new List<AppUser>();
+            foreach (var user in userManager.Users)
             {
-                ViewBag.Therapists = _context.TherapistVM.ToList();
+                if (await userManager.IsInRoleAsync(user, "Therapist"))
+                {
+                    ViewBag.Therapists.Add(user);
+                }
             }
             if (ModelState.IsValid)
             {
@@ -91,8 +116,10 @@ namespace PeninsulaPhysiotherapy.Controllers
                 appointmentVM.CreatedBy = User.FindFirstValue(ClaimTypes.Name);
                 _context.Add(appointmentVM);
                 await _context.SaveChangesAsync();
+                await _emailSender.SendEmailAsync(User.FindFirstValue(ClaimTypes.Email).ToString(), "Appointment Submited", appointmentVM.AppDate.ToString());
                 return RedirectToAction(nameof(Index));
             }
+            
             return View(appointmentVM);
         }
 

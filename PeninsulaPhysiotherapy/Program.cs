@@ -24,7 +24,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("SeeFullJobs", policy =>
-        policy.RequireRole("Admin", "Staff"));
+        policy.RequireRole("Admin", "Staff","Therapist"));
     options.AddPolicy("ManageUserRole", policy =>
         policy.RequireRole("Admin"));
     options.AddPolicy("Therapists", policy =>
@@ -44,7 +44,7 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
 builder.Services.AddControllersWithViews();
 
 
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IEmailSender, emailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 builder.Services.ConfigureApplicationCookie(o => {
     o.ExpireTimeSpan = TimeSpan.FromDays(5);
