@@ -4,12 +4,19 @@
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<head>
+    <link href="~/css/main.css" rel="stylesheet" />
+    <script src="~/js/main.js"></script>
 
+</head>
 <h1>Create a New Appointment</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+
+<div>
+    <form asp-action="Create">
+        <div class="col-md-4"  id="ContactDetailers">
+
+        
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FullName" class="control-label"></label>
@@ -27,66 +34,64 @@
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AppDate" class="control-label"></label>
-                <input asp-for="AppDate" class="form-control" />
-                <span asp-validation-for="AppDate" class="text-danger"></span>
+                <label asp-for="JobType" class="control-label"></label>
+                <input asp-for="JobType" class="form-control" />
+                <span asp-validation-for="JobType" class="text-danger"></span>
             </div>
-
-
-  
-
-
             <div class="form-group">
                 <label asp-for="Therapist" class="control-label"></label>
-                <select asp-for="Therapist" class="form-select">
+                <select id="therapistSelect" asp-for="Therapist" class="form-select">
                     <option selected>Select a Therapist</option>
-                    @foreach(var therapist in ViewBag.Therapists){
+                    @foreach (var therapist in ViewBag.Therapists)
+                    {
                         <option value="@therapist.Email">@therapist.UserName</option>
                     }
                 </select>
                 <span asp-validation-for="Therapist" class="text-danger"></span>
             </div>
-            <div id='calendar'></div>
+            <div class="form-group">
+                <label class="control-label">Selected Date</label>
+                <input class="form-control" id="SelectedDate"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="AppDate" class="control-label"></label>
+                <input asp-for="AppDate" class="form-control" />
+                <span asp-validation-for="AppDate" class="text-danger"></span>
+                
+            </div>
             
-
-
-            <div class="form-group">
-                <label asp-for="JobType" class="control-label"></label>
-                <input asp-for="JobType" class="form-control" />
-                <span asp-validation-for="JobType" class="text-danger"></span>
-            </div>
-            <br />
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+         </div>
+        <div id="calendar">
+            <script>
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'resourceTimelineWeek',
+                    selectable: true,
+                    eventColor: "#378006",
+                    dateClick: function (info) {
+                        document.getElementById('SelectedDate').value = info.date;
+                        // change the day's background color just for fun
+                        info.dayEl.style.backgroundColor = 'red';
+                    },
+                    resources: [
+                        { id: 'a', title: 'Resource A' },
+                        { id: 'b', title: 'Resource B' }
+                    ],
+                    events: [
+                        { title: 'Event 1', start: '2022-09-19', resourceId: 'a' },
+                        { title: 'Event 2', start: '2020-06-01', resourceId: 'a' },
+                        { title: 'Event 3', start: '2020-06-01', resourceId: 'b' }
+                    ]
+                });
+                calendar.render();
+            </script>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
 </div>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                timeZone: 'UTC',
-                initialView: 'resourceTimeGridDay',
-                resources: [
-                    { id: 'a', title: 'Room A' },
-                    { id: 'b', title: 'Room B' },
-                    { id: 'c', title: 'Room C' },
-                    { id: 'd', title: 'Room D' }
-                ],
-                events: 'https://fullcalendar.io/api/demo-feeds/events.json?with-resources=4&single-day'
-            });
-
-            calendar.render();
-        });
-    </script>
