@@ -11,7 +11,6 @@
 </head>
 <h1>Create a New Appointment</h1>
 <hr />
-
 <div>
     <form asp-action="Create">
         <div class="col-md-4"  id="ContactDetailers">
@@ -38,50 +37,81 @@
                 <input asp-for="JobType" class="form-control" />
                 <span asp-validation-for="JobType" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Therapist" class="control-label"></label>
-                <select id="therapistSelect" asp-for="Therapist" class="form-select">
-                    <option selected>Select a Therapist</option>
-                    @foreach (var therapist in ViewBag.Therapists)
-                    {
-                        <option value="@therapist.Email">@therapist.UserName</option>
-                    }
-                </select>
+            <div class="form-group" hidden>
+                <label asp-for="SelectedDate" class="control-label">Selected Date</label>
+                <input asp-for="SelectedDate" class="form-control" id="SelectedDate" />
+                <span asp-validation-for="SelectedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group" hidden> 
+                <label asp-for="Therapist" class="control-label">Selected Therapist</label>
+                <input asp-for="Therapist" class="form-control" id="SelectedTherapist" />
                 <span asp-validation-for="Therapist" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label class="control-label">Selected Date</label>
-                <input class="form-control" id="SelectedDate"/>
-            </div>
-            <div class="form-group">
-                <label asp-for="AppDate" class="control-label"></label>
-                <input asp-for="AppDate" class="form-control" />
-                <span asp-validation-for="AppDate" class="text-danger"></span>
-                
-            </div>
+            <input id="resources" value="@ViewBag.Resources" hidden/>
+            <input id="events" value="@ViewBag.Events" hidden/>
+               
             
          </div>
         <div id="calendar">
             <script>
+                var events=[];
+                var resources = [];
+                var message = document.getElementById('resources').value;
+                var message2 = message.split(',');
+                for(var i=0;i<message2.length;i++){
+                    
+                    resources.push({
+                        id: message2[i],
+                        title: message2[i]
+                    })
+                }
+                var message = document.getElementById('events').value;
+                var message2=message.split(';');
+                for (var i = 0; i < message2.length; i++){
+                    message3=message2[i].split(',');
+                        events.push({
+                            resourceId: message3[3],
+                            
+                            title: 'Booked',
+                            start: message3[1],
+                            end: message3[2]
+                    })
+                }
+
+
                 var calendarEl = document.getElementById('calendar');
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'resourceTimelineWeek',
                     selectable: true,
+                    height: 650,
+                    resourceAreaHeaderContent: 'Therapist',
+                    scrollTime: '08:00',
+                    weekends:false,
+                    headerToolbar: {
+                        left: 'today prev,next',
+                        center: 'title',
+                        right: 'resourceTimelineDay,resourceTimelineTenDay,resourceTimelineMonth,resourceTimelineYear'
+                    }, 
+                    views: {
+                        resourceTimelineDay: {
+                            buttonText: 'Day',
+                            slotDuration: '01:00'
+                        },
+                        resourceTimelineTenDay: {
+                            type: 'resourceTimeline',
+                            duration: { days: 10 },
+                            buttonText: '10 days'
+                        }
+                    },
                     eventColor: "#378006",
                     dateClick: function (info) {
-                        document.getElementById('SelectedDate').value = info.date;
+                        document.getElementById('SelectedDate').value = info.dateStr;
+                        document.getElementById('SelectedTherapist').value=info.resource.id;
                         // change the day's background color just for fun
                         info.dayEl.style.backgroundColor = 'red';
                     },
-                    resources: [
-                        { id: 'a', title: 'Resource A' },
-                        { id: 'b', title: 'Resource B' }
-                    ],
-                    events: [
-                        { title: 'Event 1', start: '2022-09-19', resourceId: 'a' },
-                        { title: 'Event 2', start: '2020-06-01', resourceId: 'a' },
-                        { title: 'Event 3', start: '2020-06-01', resourceId: 'b' }
-                    ]
+                    resources: resources,
+                    events: events
                 });
                 calendar.render();
             </script>

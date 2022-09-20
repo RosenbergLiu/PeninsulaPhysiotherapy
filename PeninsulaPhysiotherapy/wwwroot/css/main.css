@@ -455,10 +455,10 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
       font-size: var(--fc-small-font-size, .85em);
       font-style: italic;
     }
-.fc .fc-highlight {
-    background: rgba(188, 232, 241, 0.3);
-    background: var(--fc-highlight-color, rgba(188, 232, 241, 0.3));
-  }
+    .fc .fc-highlight {
+        background: rgb(0, 212, 255, 1);
+        background: var(--fc-highlight-color, rgba(0, 212, 255, 1));
+    }
 .fc .fc-cell-shaded,
   .fc .fc-day-disabled {
     background: rgba(208, 208, 208, 0.3);

@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using PeninsulaPhysiotherapy.Data;
 using PeninsulaPhysiotherapy.Models;
-using PeninsulaPhysiotherapy.Services;
-using SendGrid.Helpers.Mail;
+using System.ComponentModel;
+using System.Security.Claims;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
@@ -26,7 +20,7 @@ namespace PeninsulaPhysiotherapy.Controllers
         private readonly IEmailSender _emailSender;
 
         public AppointmentsController(
-            ApplicationDbContext context, UserManager<AppUser> userManager,IEmailSender emailSender)
+            ApplicationDbContext context, UserManager<AppUser> userManager, IEmailSender emailSender)
         {
             _context = context;
             this.userManager = userManager;
@@ -49,17 +43,17 @@ namespace PeninsulaPhysiotherapy.Controllers
                     ViewBag.Therapists.Add(user);
                 }
             }
-            
 
 
 
 
 
-            return _context.AppointmentVM != null ? 
+
+            return _context.AppointmentVM != null ?
                           View(await _context.AppointmentVM.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.AppointmentVM'  is null.");
 
-            
+
         }
 
         // GET: Appointments/Details/5
@@ -84,23 +78,62 @@ namespace PeninsulaPhysiotherapy.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.Therapists = new List<AppUser>();
+            string resources = "";
+
             foreach (var user in userManager.Users)
             {
                 if (await userManager.IsInRoleAsync(user, "Therapist"))
                 {
                     ViewBag.Therapists.Add(user);
+
+                    resources = resources + "," + user.UserName.ToString();
                 }
             }
+            string events = "";
+            if (_context.AppointmentVM != null)
+            {
+                var appointments = await _context.AppointmentVM.ToListAsync();
+
+                foreach (var appointment in appointments)
+                {
+                    string title = "Booked";
+                    string start = appointment.AppDate.Date.ToString("yyyy-MM-dd") + "T" + appointment.AppDate.TimeOfDay;
+                    string end = appointment.AppDate.AddHours(1).Date.ToString("yyyy-MM-dd") + "T" + appointment.AppDate.AddHours(1).TimeOfDay;
+                    string resourceId = "";
+
+                    var therapistEmail = appointment.Therapist;
+                    var TherapistUser = await userManager.FindByEmailAsync(therapistEmail);
+                    if (TherapistUser != null)
+                    {
+                        resourceId = TherapistUser.UserName;
+                    }
+                    string record = title + "," + start + "," + end + "," + resourceId;
+                    events = events + ";" + record;
+                };
+            }
+            if (events.Length > 0)
+            {
+                ViewBag.Events = events.Substring(1, events.Length - 1);
+            }
+
+
+            if (resources.Length > 0)
+            {
+                ViewBag.Resources = resources.Substring(1, resources.Length - 1);
+            }
+
 
             return View();
         }
+
 
         // POST: Appointments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [RequireHttps]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Gender,Phone,AppDate,Therapist,JobType")] AppointmentVM appointmentVM)
+        public async Task<IActionResult> Create([Bind("Id,FullName,Gender,Phone,SelectedDate,Therapist,JobType")] AppointmentVM appointmentVM)
         {
             ViewBag.Therapists = new List<AppUser>();
             foreach (var user in userManager.Users)
@@ -110,17 +143,62 @@ namespace PeninsulaPhysiotherapy.Controllers
                     ViewBag.Therapists.Add(user);
                 }
             }
+            if (appointmentVM.SelectedDate=="")
+            {
+                ModelState.AddModelError(string.Empty,"Please select a time");
+            }
+
+            if (_context.AppointmentVM != null)
+            {
+                var appointments = await _context.AppointmentVM.ToListAsync();
+                foreach (var appointment in appointments)
+                {
+                    var therapistUser = await userManager.FindByEmailAsync(appointment.Therapist);
+                    var therapistName = therapistUser.UserName;
+                    if (therapistName == appointmentVM.Therapist)
+                    {
+                        if (appointment.SelectedDate == appointmentVM.SelectedDate)
+                        {
+                            ModelState.AddModelError(string.Empty, "Invalid time");
+                            return View(appointmentVM);
+
+                        }
+                    }
+                    
+                }
+            }
             if (ModelState.IsValid)
             {
                 appointmentVM.JobStatus = "Submited";
                 appointmentVM.CreatedBy = User.FindFirstValue(ClaimTypes.Name);
+                appointmentVM.AppDate = DateTimeConverter(appointmentVM.SelectedDate);
+                var SelectedTherapist = await userManager.FindByNameAsync(appointmentVM.Therapist);
+                appointmentVM.Therapist = SelectedTherapist.Email;
                 _context.Add(appointmentVM);
                 await _context.SaveChangesAsync();
                 await _emailSender.SendEmailAsync(User.FindFirstValue(ClaimTypes.Email).ToString(), "Appointment Submited", appointmentVM.AppDate.ToString());
                 return RedirectToAction(nameof(Index));
             }
-            
+
             return View(appointmentVM);
+        }
+
+        public DateTime DateTimeConverter(string dateFromCal)
+        {
+            var dateOnly = dateFromCal.Split('T')[0].Split('-');
+            int year = int.Parse(dateOnly[0]);
+            int month = int.Parse(dateOnly[1]);
+            int day= int.Parse(dateOnly[2]);
+            var timeOnly = dateFromCal.Split('T')[1].Split('+')[0].Split(':');
+            Console.WriteLine(dateOnly);
+            Console.WriteLine(timeOnly);
+            int hour = int.Parse(timeOnly[0]);
+            int minute = int.Parse(timeOnly[1]);
+            int second = int.Parse(timeOnly[2]);
+            var outDate = new DateTime(year, month, day,hour,minute,second);
+            //outDate=outDate.AddHours(hour).AddMinutes(minute).AddSeconds(second);
+
+            return outDate;
         }
 
         // GET: Appointments/Edit/5
@@ -132,10 +210,64 @@ namespace PeninsulaPhysiotherapy.Controllers
             }
 
             var appointmentVM = await _context.AppointmentVM.FindAsync(id);
+            
+
             if (appointmentVM == null)
             {
                 return NotFound();
             }
+            else
+            {
+                var TherapistUser = await userManager.FindByEmailAsync(appointmentVM.Therapist);
+                appointmentVM.Therapist = TherapistUser.UserName;
+            }
+            ViewBag.Therapists = new List<AppUser>();
+            string resources = "";
+
+            foreach (var user in userManager.Users)
+            {
+                if (await userManager.IsInRoleAsync(user, "Therapist"))
+                {
+                    ViewBag.Therapists.Add(user);
+                    resources = resources + "," + user.UserName.ToString();
+                }
+            }
+            string events = "";
+            if (_context.AppointmentVM != null)
+            {
+                var appointments = await _context.AppointmentVM.ToListAsync();
+
+                foreach (var appointment in appointments)
+                {
+                    string title = "Booked";
+                    string start = appointment.AppDate.Date.ToString("yyyy-MM-dd") + "T" + appointment.AppDate.TimeOfDay;
+                    string end = appointment.AppDate.AddHours(1).Date.ToString("yyyy-MM-dd") + "T" + appointment.AppDate.AddHours(1).TimeOfDay;
+                    string resourceId = "";
+                    var therapistEmail = appointment.Therapist;
+                    var TherapistUser = await userManager.FindByEmailAsync(therapistEmail);
+                    if (TherapistUser != null)
+                    {
+                        resourceId = TherapistUser.UserName;
+                    }
+                    else
+                    {
+                        resourceId = therapistEmail;
+                    }
+                    string record = title + "," + start + "," + end + "," + resourceId;
+                    events = events + ";" + record;
+                };
+            }
+            
+            if (events.Length > 0)
+            {
+                ViewBag.Events = events.Substring(1, events.Length - 1);
+            }
+            if (resources.Length > 0)
+            {
+                ViewBag.Resources = resources.Substring(1, resources.Length - 1);
+            }
+            
+
             return View(appointmentVM);
         }
 
@@ -209,19 +341,19 @@ namespace PeninsulaPhysiotherapy.Controllers
             {
                 _context.AppointmentVM.Remove(appointmentVM);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AppointmentVMExists(int id)
         {
-          return (_context.AppointmentVM?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.AppointmentVM?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
         public async Task<IActionResult> Approve(int id)
         {
-            
+
             var appointmentVM = await _context.AppointmentVM.FindAsync(id);
             if (appointmentVM == null)
             {

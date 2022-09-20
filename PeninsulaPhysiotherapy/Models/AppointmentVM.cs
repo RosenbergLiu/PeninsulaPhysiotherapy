@@ -19,5 +19,7 @@ namespace PeninsulaPhysiotherapy.Models
         public string? JobType { get; set; }
         public string? JobStatus { get; set; }
         public string? CreatedBy { get; set; }
+        [Required]
+        public string? SelectedDate { get; set; }
     }
 }
