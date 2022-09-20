@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +6,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using PeninsulaPhysiotherapy.Data;
 using PeninsulaPhysiotherapy.Models;
-using System.ComponentModel;
 using System.Security.Claims;
 
 namespace PeninsulaPhysiotherapy.Controllers
@@ -26,6 +24,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             this.userManager = userManager;
             this._emailSender = emailSender;
         }
+
 
         // GET: Appointments
         public async Task<IActionResult> Index()
@@ -143,30 +142,15 @@ namespace PeninsulaPhysiotherapy.Controllers
                     ViewBag.Therapists.Add(user);
                 }
             }
-            if (appointmentVM.SelectedDate=="")
+            //Date not null
+            if (appointmentVM.SelectedDate == "")
             {
-                ModelState.AddModelError(string.Empty,"Please select a time");
+                
+                RedirectToAction(nameof(Create));
+                ModelState.AddModelError(string.Empty, "Please select a time");
             }
-
-            if (_context.AppointmentVM != null)
-            {
-                var appointments = await _context.AppointmentVM.ToListAsync();
-                foreach (var appointment in appointments)
-                {
-                    var therapistUser = await userManager.FindByEmailAsync(appointment.Therapist);
-                    var therapistName = therapistUser.UserName;
-                    if (therapistName == appointmentVM.Therapist)
-                    {
-                        if (appointment.SelectedDate == appointmentVM.SelectedDate)
-                        {
-                            ModelState.AddModelError(string.Empty, "Invalid time");
-                            return View(appointmentVM);
-
-                        }
-                    }
-                    
-                }
-            }
+            
+            //Post
             if (ModelState.IsValid)
             {
                 appointmentVM.JobStatus = "Submited";
@@ -179,7 +163,6 @@ namespace PeninsulaPhysiotherapy.Controllers
                 await _emailSender.SendEmailAsync(User.FindFirstValue(ClaimTypes.Email).ToString(), "Appointment Submited", appointmentVM.AppDate.ToString());
                 return RedirectToAction(nameof(Index));
             }
-
             return View(appointmentVM);
         }
 
@@ -188,15 +171,14 @@ namespace PeninsulaPhysiotherapy.Controllers
             var dateOnly = dateFromCal.Split('T')[0].Split('-');
             int year = int.Parse(dateOnly[0]);
             int month = int.Parse(dateOnly[1]);
-            int day= int.Parse(dateOnly[2]);
+            int day = int.Parse(dateOnly[2]);
             var timeOnly = dateFromCal.Split('T')[1].Split('+')[0].Split(':');
             Console.WriteLine(dateOnly);
             Console.WriteLine(timeOnly);
             int hour = int.Parse(timeOnly[0]);
             int minute = int.Parse(timeOnly[1]);
             int second = int.Parse(timeOnly[2]);
-            var outDate = new DateTime(year, month, day,hour,minute,second);
-            //outDate=outDate.AddHours(hour).AddMinutes(minute).AddSeconds(second);
+            var outDate = new DateTime(year, month, day, hour, minute, second);
 
             return outDate;
         }
@@ -210,7 +192,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             }
 
             var appointmentVM = await _context.AppointmentVM.FindAsync(id);
-            
+
 
             if (appointmentVM == null)
             {
@@ -257,7 +239,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                     events = events + ";" + record;
                 };
             }
-            
+
             if (events.Length > 0)
             {
                 ViewBag.Events = events.Substring(1, events.Length - 1);
@@ -266,7 +248,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             {
                 ViewBag.Resources = resources.Substring(1, resources.Length - 1);
             }
-            
+
 
             return View(appointmentVM);
         }
@@ -277,7 +259,7 @@ namespace PeninsulaPhysiotherapy.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RequireHttps]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Gender,Phone,AppDate,Therapist,JobType")] AppointmentVM appointmentVM)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Gender,Phone,SelectedDate,Therapist,JobType")] AppointmentVM appointmentVM)
         {
             if (id != appointmentVM.Id)
             {
@@ -288,8 +270,11 @@ namespace PeninsulaPhysiotherapy.Controllers
             {
                 try
                 {
+                    appointmentVM.AppDate = DateTimeConverter(appointmentVM.SelectedDate);
                     appointmentVM.JobStatus = "Submited";
                     appointmentVM.CreatedBy = User.FindFirstValue(ClaimTypes.Name);
+                    var SelectedTherapist = await userManager.FindByNameAsync(appointmentVM.Therapist);
+                    appointmentVM.Therapist = SelectedTherapist.Email;
                     _context.Update(appointmentVM);
                     await _context.SaveChangesAsync();
                 }

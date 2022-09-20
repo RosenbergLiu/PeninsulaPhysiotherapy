@@ -25,11 +25,6 @@ namespace PeninsulaPhysiotherapy.Controllers
         {
             var users = userManager.Users;
 
-            if (!String.IsNullOrEmpty(id))
-            {
-                users = users.Where(s => s.UserName!.Contains(id));
-                ViewBag.Search = $"search result for '{id}'";
-            }
 
             var roles = roleManager.Roles;
             ViewBag.UserRole = new Dictionary<string, IList<string>>();

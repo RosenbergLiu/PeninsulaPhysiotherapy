@@ -9,6 +9,14 @@
     var roles = roleManager.Roles;
     var users = userManager.Users;
 }
+<head>
+    <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
+    
+
+</head>
+
+
+
 <body>
 <h1 class="text-center display-4">User Management</h1>
 <a class="btn btn-primary mb-3" style="width:auto" href="/Identity/Account/Register">
@@ -16,23 +24,10 @@
 </a>
 <br />
 
-<form method="get" class="col-sm-6">
-    <div class="input-group">
-        <input class="form-control" type="text" name="id"/>
-        <div class="input-group-append">
-            <input class="btn btn-primary" type="submit" value="Search" />
-        </div>
-    </div>
-    @if (!String.IsNullOrEmpty(ViewBag.Search)){
-        <br />
-        <input type="submit" class="btn btn-danger" value="Clear @ViewBag.Search">
-    }
-</form>
-
 <hr />
 <br />
 @if(Model.Any()){
-    <table class="table">
+    <table class="table" id="userTable">
         <thead>
             <tr>
                 <th>
@@ -99,3 +94,13 @@
     <h2>No User Matched</h2>
 }
 </body>
+@section Scripts{
+
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#userTable').DataTable();
+        });
+    </script>
+
+}

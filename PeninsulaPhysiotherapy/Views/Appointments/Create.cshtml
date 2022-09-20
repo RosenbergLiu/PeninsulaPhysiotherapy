@@ -13,8 +13,9 @@
 <hr />
 <div>
     <form asp-action="Create">
-        <div class="col-md-4"  id="ContactDetailers">
-
+        <div class="row">
+            <div class="col-sm-4"></div>
+        <div class="col-sm-4"  id="ContactDetailers">
         
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -49,9 +50,9 @@
             </div>
             <input id="resources" value="@ViewBag.Resources" hidden/>
             <input id="events" value="@ViewBag.Events" hidden/>
-               
-            
-         </div>
+        </div>
+        </div>
+        <br />
         <div id="calendar">
             <script>
                 var events=[];
@@ -59,7 +60,6 @@
                 var message = document.getElementById('resources').value;
                 var message2 = message.split(',');
                 for(var i=0;i<message2.length;i++){
-                    
                     resources.push({
                         id: message2[i],
                         title: message2[i]
@@ -77,8 +77,6 @@
                             end: message3[2]
                     })
                 }
-
-
                 var calendarEl = document.getElementById('calendar');
                 var calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'resourceTimelineWeek',
@@ -87,6 +85,10 @@
                     resourceAreaHeaderContent: 'Therapist',
                     scrollTime: '08:00',
                     weekends:false,
+                    eventOverlap: false,
+                    slotEventOverlap: false,
+                    selectOverlap: false,
+                    eventDisplay: 'list-item',
                     headerToolbar: {
                         left: 'today prev,next',
                         center: 'title',
@@ -104,6 +106,7 @@
                         }
                     },
                     eventColor: "#378006",
+                    eventTextColor: '#ffffff',
                     dateClick: function (info) {
                         document.getElementById('SelectedDate').value = info.dateStr;
                         document.getElementById('SelectedTherapist').value=info.resource.id;
@@ -116,9 +119,20 @@
                 calendar.render();
             </script>
         </div>
-        <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-sm-4">
+
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary btn-lg" style="width:100%"/>
+                </div>
+            </div>
+
         </div>
+        
     </form>
 </div>
 
