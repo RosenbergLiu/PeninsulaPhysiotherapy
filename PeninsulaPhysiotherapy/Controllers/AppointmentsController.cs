@@ -42,17 +42,9 @@ namespace PeninsulaPhysiotherapy.Controllers
                     ViewBag.Therapists.Add(user);
                 }
             }
-
-
-
-
-
-
             return _context.AppointmentVM != null ?
                           View(await _context.AppointmentVM.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.AppointmentVM'  is null.");
-
-
         }
 
         // GET: Appointments/Details/5
@@ -126,9 +118,7 @@ namespace PeninsulaPhysiotherapy.Controllers
         }
 
 
-        // POST: Appointments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [RequireHttps]
         [ValidateAntiForgeryToken]
@@ -183,7 +173,8 @@ namespace PeninsulaPhysiotherapy.Controllers
             return outDate;
         }
 
-        // GET: Appointments/Edit/5
+
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.AppointmentVM == null)
@@ -253,9 +244,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             return View(appointmentVM);
         }
 
-        // POST: Appointments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RequireHttps]
@@ -294,7 +283,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             return View(appointmentVM);
         }
 
-        // GET: Appointments/Delete/5
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.AppointmentVM == null)
@@ -312,7 +301,8 @@ namespace PeninsulaPhysiotherapy.Controllers
             return View(appointmentVM);
         }
 
-        // POST: Appointments/Delete/5
+
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -374,7 +364,5 @@ namespace PeninsulaPhysiotherapy.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-
     }
 }

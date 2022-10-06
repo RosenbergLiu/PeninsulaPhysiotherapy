@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PeninsulaPhysiotherapy.Data;
 using PeninsulaPhysiotherapy.Services;
 using PeninsulaPhysiotherapy.Models;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,20 @@ services.AddAuthentication().AddGoogle(googleOptions =>
 {
     googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
     googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+});
+
+
+services.AddAuthentication().AddFacebook(facebookOptions =>
+{
+    facebookOptions.AppId = configuration["Authentication:Facebook:AppId"];
+    facebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+});
+
+
+services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
+{
+    microsoftOptions.ClientId = configuration["Authentication:Microsoft:ClientId"];
+    microsoftOptions.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"];
 });
 
 // Add services to the container.
