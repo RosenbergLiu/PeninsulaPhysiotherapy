@@ -19,6 +19,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             _context = context;
         }
 
+
         public async Task<IActionResult> Index()
         {
             ViewBag.CommentList = null;
@@ -28,8 +29,8 @@ namespace PeninsulaPhysiotherapy.Controllers
                 ViewBag.CommentList = CommentList;
             }
             return View();
-
         }
+
 
         [Authorize]
         public IActionResult Feedback()
@@ -48,8 +49,8 @@ namespace PeninsulaPhysiotherapy.Controllers
             }
             if (ModelState.IsValid)
             {
-                feedbackVM.CommentBy= User.FindFirstValue(ClaimTypes.Name);
-                feedbackVM.CommentDate= DateTime.Now;
+                feedbackVM.CommentBy = User.FindFirstValue(ClaimTypes.Name);
+                feedbackVM.CommentDate = DateTime.Now;
                 _context.Add(feedbackVM);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -13,6 +13,12 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap");
+
+@font-face {
+    font-family: 'montserrat-medium';
+    src: url('../../../montserrat-medium.ttf') format('truetype');
+}
+
 :root {
   --bs-blue: #007bff;
   --bs-indigo: #6610f2;
@@ -642,28 +648,28 @@ progress {
 .container-lg,
 .container-md,
 .container-sm {
-  --bs-gutter-x: 1.5rem;
-  --bs-gutter-y: 0;
-  width: 100%;
-  padding-right: calc(var(--bs-gutter-x) * 0.5);
-  padding-left: calc(var(--bs-gutter-x) * 0.5);
-  margin-right: auto;
-  margin-left: auto;
+  /* --bs-gutter-x: 1.5rem; */
+  /* --bs-gutter-y: 0; */
+  /* width: 100%; */
+  /* padding-right: calc(var(--bs-gutter-x) * 0.5); */
+  /* padding-left: calc(var(--bs-gutter-x) * 0.5); */
+  /* margin-right: auto; */
+  /* margin-left: auto; */
 }
 
 @media (min-width: 576px) {
   .container-sm, .container {
-    max-width: 540px;
+    /* max-width: 540px; */
   }
 }
 @media (min-width: 768px) {
   .container-md, .container-sm, .container {
-    max-width: 720px;
+    /* max-width: 720px; */
   }
 }
 @media (min-width: 992px) {
   .container-lg, .container-md, .container-sm, .container {
-    max-width: 960px;
+    /* max-width: 960px; */
   }
 }
 @media (min-width: 1200px) {
@@ -3987,6 +3993,8 @@ textarea.form-control-lg {
   }
 }
 @media (min-width: 992px) {
+
+
   .navbar-expand-lg {
     flex-wrap: nowrap;
     justify-content: flex-start;
