@@ -7,120 +7,124 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <head>
-    
+
     <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet">
 
 </head>
 <h1 class="text-center display-4">Booking Management</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table" id="table">
-    <thead>
-        <tr>
-            <th>
-                Full Name
-            </th>
-            <th>
-                Gender
-            </th>
-            <th>
-                Phone
-            </th>
-            <th>
-                Date
-            </th>
-            <th>
-                Therapist
-            </th>
-            <th>
-                Job Type
-            </th>
+<div class="container">
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table" id="table">
+        <thead>
+            <tr>
+                <th>
+                    Full Name
+                </th>
+                <th>
+                    Gender
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Therapist
+                </th>
+                <th>
+                    Job Type
+                </th>
                 <th>
                     Job Status
                 </th>
                 <th>
                     Created By
                 </th>
-            
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded) {
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FullName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Gender)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Phone)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AppDate)
-                    </td>
-                    <td>
-                        @ViewBag.TherapistName[item.Therapist]
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.JobType)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.JobStatus)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreatedBy)
-                    </td>
 
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                        <a asp-action="Approve" asp-route-id="@item.Id">Approve</a> |
-                        <a asp-action="Reject" asp-route-id="@item.Id">Reject</a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            @foreach (var item in Model.Where(m => m.CreatedBy.Equals(ViewBag.CreateBy)))
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FullName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Gender)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Phone)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AppDate)
-                    </td>
-                    <td>
-                        @ViewBag.TherapistName[item.Therapist]
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.JobType)
-                    </td>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Gender)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AppDate)
+                        </td>
+                        <td>
+                            @ViewBag.TherapistName[item.Therapist]
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.JobType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.JobStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedBy)
+                        </td>
 
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                            <a asp-action="Approve" asp-route-id="@item.Id">Approve</a> |
+                            <a asp-action="Reject" asp-route-id="@item.Id">Reject</a>
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+            else
+            {
+                @foreach (var item in Model.Where(m => m.CreatedBy.Equals(ViewBag.CreateBy)))
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Gender)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AppDate)
+                        </td>
+                        <td>
+                            @ViewBag.TherapistName[item.Therapist]
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.JobType)
+                        </td>
+
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
 @*
 <script src="~/lib/jquery/dist/jquery.min.js"></script>*@
 

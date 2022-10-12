@@ -37,11 +37,15 @@ public class emailSender : IEmailSender
         var from = new EmailAddress("rcxiangyuliu@gmail.com", "PeninsulaPhysiotherapy");
         var to = new EmailAddress(toEmail, "PeninsulaPhysiotherapy");
         var plainTextContent = message;
+
+        var messageEmail = new SendGridMessage();
+
         var htmlContent = message;
+
         var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 
-        // Disable click tracking.
-        // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
+
+
         msg.SetClickTracking(false, false);
         var response = await client.SendEmailAsync(msg);
         _logger.LogInformation(response.IsSuccessStatusCode
