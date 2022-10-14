@@ -31,7 +31,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Appointments" asp-action="Index">Bookings</a>
                         </li>
-                        @if ((await AuthorizationService.AuthorizeAsync(User, "ManageUserRole")).Succeeded){
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Management")).Succeeded)
+                        {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="ListUsers">Users</a>
                             </li>
@@ -46,9 +47,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Feedback">Feedback</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Files">Files</a>
-                        </li>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Management")).Succeeded)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Files">Files</a>
+                            </li>
+                        }
+                        
 
 
                     </ul>

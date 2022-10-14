@@ -7,6 +7,16 @@ using PeninsulaPhysiotherapy.Data;
 using PeninsulaPhysiotherapy.Models;
 using System.Diagnostics;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using PeninsulaPhysiotherapy.Services;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
@@ -15,12 +25,23 @@ namespace PeninsulaPhysiotherapy.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> userManager;
+        private readonly IFileUploadService _uploadService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<AppUser> userManager)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<AppUser> userManager,IFileUploadService uploadService)
         {
             _logger = logger;
             _context = context;
             this.userManager = userManager;
+            _uploadService = uploadService;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [RequireHttps]
+        [ValidateAntiForgeryToken]
+        public IActionResult Files()
+        {
+            return View();
         }
 
         public async Task<IActionResult> Index()
@@ -117,5 +138,25 @@ namespace PeninsulaPhysiotherapy.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [RequireHttps]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Files(IFormFile file)
+        {
+            if (file != null)
+            {
+                await _uploadService.UploadFileAsync(file);
+            }
+            return View();
+        }
+
+
+
+
+
+
+
     }
 }

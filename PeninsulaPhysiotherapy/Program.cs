@@ -10,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 var configuration = builder.Configuration;
+services.AddScoped<IFileUploadService, LocalFileUploadService>();
+
+
 services.AddAuthentication().AddGoogle(googleOptions =>
 {
     googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
@@ -38,10 +41,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("SeeFullJobs", policy =>
+    options.AddPolicy("Works", policy =>
         policy.RequireRole("Admin", "Staff","Therapist"));
-    options.AddPolicy("ManageUserRole", policy =>
+    options.AddPolicy("Admin", policy =>
         policy.RequireRole("Admin"));
+    options.AddPolicy("Management", policy =>
+        policy.RequireRole("Admin","Staff"));
     options.AddPolicy("Therapists", policy =>
         policy.RequireRole("Therapist"));
 
