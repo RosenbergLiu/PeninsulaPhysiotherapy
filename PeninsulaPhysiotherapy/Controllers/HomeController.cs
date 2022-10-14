@@ -1,22 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using PeninsulaPhysiotherapy.Data;
 using PeninsulaPhysiotherapy.Models;
+using PeninsulaPhysiotherapy.Services;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System.Diagnostics;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
-using Microsoft.Net.Http.Headers;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using PeninsulaPhysiotherapy.Services;
-using MailKit.Net.Smtp;
-using MimeKit;
 
 namespace PeninsulaPhysiotherapy.Controllers
 {
@@ -26,19 +20,19 @@ namespace PeninsulaPhysiotherapy.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> userManager;
         private readonly IFileUploadService _uploadService;
+        private readonly IEmailSender _emailSender;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<AppUser> userManager,IFileUploadService uploadService)
+
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<AppUser> userManager, IFileUploadService uploadService, IEmailSender emailSender)
         {
             _logger = logger;
             _context = context;
             this.userManager = userManager;
             _uploadService = uploadService;
+            _emailSender = emailSender;
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        [RequireHttps]
-        [ValidateAntiForgeryToken]
+
         public IActionResult Files()
         {
             return View();
@@ -152,9 +146,22 @@ namespace PeninsulaPhysiotherapy.Controllers
             return View();
         }
 
-
-
-
+        public async Task<IActionResult> SendBulkEmail()
+        {
+            var users = await userManager.Users.ToListAsync();
+            foreach (var user in users)
+            {
+                await _emailSender.SendEmailAsync(
+                    user.Email.ToString(),
+                    "25% discount from Peninsula Physiotherapy",
+                    "@We are celebrating 2-year anniversary. This is a 25% off voucher from us to thank you for supporting us."
+                    
+                    );
+                
+            }
+            return RedirectToAction(nameof(Files));
+        }
+        
 
 
 

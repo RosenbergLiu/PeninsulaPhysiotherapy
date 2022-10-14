@@ -50,7 +50,7 @@
             </tr>
         </thead>
         <tbody>
-            @if ((await AuthorizationService.AuthorizeAsync(User, "SeeFullJobs")).Succeeded)
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Works")).Succeeded)
             {
                 @foreach (var item in Model)
                 {

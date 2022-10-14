@@ -2,10 +2,11 @@
 @model PeninsulaPhysiotherapy.Views.Home.FilesModel
 @{
 }
-<div class="Text-center">
-    <h1 class="display-4">File Upload</h1>
-</div>
+
 <div class="container">
+    <div class="Text-center">
+        <h1 class="text-center display-4">Voucher File Upload</h1>
+    </div>
     <div class="mb-3 mt-3">
         <form method="post" enctype="multipart/form-data">
             <div class="mb-3">
@@ -18,5 +19,7 @@
 
         </form>
     </div>
+    <hr />
+    <a class="btn btn-primary" asp-controller="Home" asp-action="SendBulkEmail">Send Voucher to All</a>
 
 </div>

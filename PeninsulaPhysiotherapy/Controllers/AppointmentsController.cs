@@ -150,7 +150,7 @@ namespace PeninsulaPhysiotherapy.Controllers
                 appointmentVM.Therapist = SelectedTherapist.Email;
                 _context.Add(appointmentVM);
                 await _context.SaveChangesAsync();
-                await _emailSender.SendEmailAsync(User.FindFirstValue(ClaimTypes.Email).ToString(), "Appointment Submited", appointmentVM.AppDate.ToString());
+                await _emailSender.SendEmailAsync(User.FindFirstValue(ClaimTypes.Email).ToString(), "Appointment Submited", "You booking is at "+appointmentVM.AppDate.ToString());
                 return RedirectToAction(nameof(Index));
             }
             return View(appointmentVM);
