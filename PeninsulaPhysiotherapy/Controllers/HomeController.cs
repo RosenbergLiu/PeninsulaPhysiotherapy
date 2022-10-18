@@ -146,6 +146,7 @@ namespace PeninsulaPhysiotherapy.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SendBulkEmail()
         {
             var users = await userManager.Users.ToListAsync();
