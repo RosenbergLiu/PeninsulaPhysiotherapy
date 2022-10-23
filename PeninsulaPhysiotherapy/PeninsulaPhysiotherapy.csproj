@@ -84,4 +84,13 @@
     <Folder Include="wwwroot\storage\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\storage\VOUCHER.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\storage\VOUCHER.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

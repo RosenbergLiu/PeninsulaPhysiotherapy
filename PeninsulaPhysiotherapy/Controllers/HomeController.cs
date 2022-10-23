@@ -118,9 +118,6 @@ namespace PeninsulaPhysiotherapy.Controllers
                 loggedUser.rated = true;
                 await userManager.UpdateAsync(loggedUser);
 
-
-
-
                 return RedirectToAction(nameof(Index));
             }
             return View(feedbackVM);
@@ -158,13 +155,8 @@ namespace PeninsulaPhysiotherapy.Controllers
                     "@We are celebrating 2-year anniversary. This is a 25% off voucher from us to thank you for supporting us."
                     
                     );
-                
             }
             return RedirectToAction(nameof(Files));
         }
-        
-
-
-
     }
 }
